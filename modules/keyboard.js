@@ -246,6 +246,21 @@ Keyboard.DEFAULTS = {
         this.quill.scrollIntoView();
       }
     },
+    'blockquote enter': {
+      key: Keyboard.keys.ENTER,
+      collapsed: true,
+      format: ['blockquote'],
+      suffix: /^$/,
+      handler: function (range, context) {
+        const [line, offset] = this.quill.getLine(range.index)
+        const delta = new Delta().retain(range.index)
+           .insert('\n', context.format)
+           .retain(line.length() - offset - 1)
+           .retain(1, { blockquote: null })
+        this.quill.updateContents(delta, Quill.sources.USER)
+        this.quill.setSelection(range.index + 1, Quill.sources.SILENT)
+        this.quill.scrollIntoView()
+      }
     'list autofill': {
       key: ' ',
       collapsed: true,
